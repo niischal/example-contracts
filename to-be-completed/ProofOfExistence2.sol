@@ -1,4 +1,6 @@
-pragma solidity ^0.5.0;
+// SPDX-License-Identifier: GPL-3.0
+
+pragma solidity ^0.8.0;
 
 contract ProofOfExistence2 {
 
@@ -10,7 +12,7 @@ contract ProofOfExistence2 {
   function storeProof(bytes32 proof) 
     public 
   {
-  
+    proofs.push(proof);
   }
 
   // calculate and store the proof for a document
@@ -18,7 +20,8 @@ contract ProofOfExistence2 {
   function notarize(string calldata document) 
     external 
   {
-
+    bytes32 proof = proofFor(document);
+    storeProof(proof);
   }
 
   // helper function to get a document's sha256
@@ -28,7 +31,7 @@ contract ProofOfExistence2 {
     public 
     returns (bytes32) 
   {
-    
+    return sha256(abi.encodePacked(document));
   }
 
   // check if a document has been notarized
@@ -38,7 +41,8 @@ contract ProofOfExistence2 {
     view 
     returns (bool) 
   {
-    
+    bytes32 proof = proofFor(document);
+    return hasProof(proof);
   }
 
   // returns true if proof is stored
@@ -48,5 +52,14 @@ contract ProofOfExistence2 {
     view 
     returns (bool) 
   {
-   
+    bool val;
+   for(uint256 i=0; i < proofs.length ; i++){
+     val=false;
+     if (proofs[i]==proof){
+       val=true;
+     }
+   }
+   return val;
+  }
+
 }
